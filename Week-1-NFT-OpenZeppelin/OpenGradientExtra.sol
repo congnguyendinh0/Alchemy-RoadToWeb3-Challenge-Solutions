@@ -17,7 +17,7 @@ contract OpenGradient is ERC721, ERC721Enumerable, ERC721URIStorage {
     function safeMint(address to, string memory uri) public  {
         uint256 tokenId = _tokenIdCounter.current();
         require(_tokenIdCounter.current() <= MAX_SUPPLY, "I'm sorry we reached the cap");
-        // this will require the sender to have <= 5 participations
+        // <= 5 participations
         require(balanceOf(msg.sender) <= MAX_PARTICIPATION,'Each address only own less than 4');
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
