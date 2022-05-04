@@ -6,19 +6,23 @@ import "@openzeppelin/contracts@4.6.0/token/ERC721/extensions/ERC721Enumerable.s
 import "@openzeppelin/contracts@4.6.0/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts@4.6.0/utils/Counters.sol";
 
-contract OpenGradientV2 is ERC721, ERC721Enumerable, ERC721URIStorage {
+contract OpenGradientV3 is ERC721, ERC721Enumerable, ERC721URIStorage {
     using Counters for Counters.Counter;
     uint256 MAX_SUPPLY = 100000;
     uint256 MAX_PARTICIPATION = 5;
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("OpenGradientV2", "OGRDNTS2") {}
+    constructor() ERC721("OpenGradientV3", "OGRDNTS3") {}
+    //mapping
+    mapping(address => uint256) limit;
 
     function safeMint(address to, string memory uri) public  {
         uint256 tokenId = _tokenIdCounter.current();
+        // usee mapping to limit
+        require(limit[msg.sender] < MAX_PARTICIPATION, "Limit reached");
         require(_tokenIdCounter.current() <= MAX_SUPPLY, "I'm sorry we reached the cap");
-        // <= 5 participations
-        require(balanceOf(msg.sender) <= MAX_PARTICIPATION,'Each address only own less than 4');
+        // require(balanceOf(msg.sender) < MAX_PARTICIPATION,'Each address only own less than 4'); -> bad if  the user has sold he can buy again
+        limit[msg.sender] = limit[msg.sender]+1;
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
